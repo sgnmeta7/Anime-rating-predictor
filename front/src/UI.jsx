@@ -41,7 +41,7 @@ export default function UI() {
     airing: 0,
     duration: 24,
     rating: "PG-13 - Teens 13 or older",
-    studio: "Mappa",
+    studio: "MAPPA",
   });
 
   const [selectedGenres, setSelectedGenres] = useState(["Action"])
@@ -95,14 +95,23 @@ export default function UI() {
       }
 
       const data = await response.json()
-      setpred(data.predicted_class || data.predicted_score || data)
+      setpred(data.prediction_label || data.predicted_class || data.predicted_score)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
   }
-
+const clarifymsg = (prediction) => {
+    const str = String(prediction).toLowerCase();
+    if (str.includes("great")) {
+      return "This anime would likely be succesful with a score equal to or above 8";
+    }
+    if (str.includes("good")) {
+      return "this anime will likely perform fine with a score between 6.5 to 8";
+    }
+    return "this anime might not perform well with a score of below 6.5.";
+  };
   return (
     <div >
       <h1>Anime Success Rating Predictor</h1>
@@ -203,7 +212,7 @@ export default function UI() {
       {pred && (
         <div>
           <h3>Predicted Result:</h3>
-          <p >{JSON.stringify(pred)}</p>
+          <p >{clarifymsg(pred)}</p>
         </div>
       )}
 
